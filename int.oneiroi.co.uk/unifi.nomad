@@ -8,21 +8,33 @@ job "unifi" {
   }
 
   group "unifi" {
+    #https://help.ui.com/hc/en-us/articles/218506997-UniFi-Network-Required-Ports-Reference
     network {
-      port "dhcp" {
-	static       = 67
-        to           = 67
-        host_network = "tailscale"
-      }
-      port "dns" {
-        static       = 53
-        to           = 53
-        host_network = "tailscale"
-      }
       port "http" {
         static       = 8080
-        to           = 80
-        host_network = "tailscale"
+        to           = 8080
+      }
+      port "https" {
+        static       = 8443
+        to           = 8443
+      }
+      port "httpredir"{
+        static       = 8880
+      }
+      port "httpsredir"{
+        static       = 8843
+      }
+      port "speedtest" {
+        static       = 6789
+      }
+      port "stun" {
+        static       = 3478
+      }
+      port "servicedisc" {
+        static       = 10001
+      }
+      port "l2disc" {
+        static      = 1900
       }
     }
     task "server" {
@@ -30,13 +42,14 @@ job "unifi" {
       config {        
         image = "linuxserver/unifi-controller:latest"
         ports = [
-          "3478",
-          "5114",
-          "6789",
-          "8080",
-          "8880",
-          "8443",
-          "10001",
+          "http",
+          "https",
+          "httpredir",
+          "httpsredir",
+          "speedtest",
+          "stun",
+          "servicedisc",
+          "l2disc"
         ]
         volumes  = [
           "/media/nvem/unifi/config:/config",
