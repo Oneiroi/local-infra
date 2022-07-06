@@ -1,6 +1,6 @@
 job "unifi" {
   datacenters = ["DC1"]
-  type = "system"
+  type = "service"
   
   constraint {    
     attribute = "${attr.kernel.name}"

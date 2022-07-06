@@ -10,16 +10,18 @@ job "pi-hole" {
   group "pi-hole" {
     network {
       port "dhcp" {
-	static       = 67
-        to           = 67
+	      static       = 67
       }
       port "dns" {
         static       = 53
-        to           = 53
       }
       port "http" {
         static       = 8080
         to           = 80
+      }
+      port "https" {
+        static       = 8443
+        to           = 443
       }
     }
     task "server" {
@@ -30,6 +32,7 @@ job "pi-hole" {
           "dns",
           "dhcp",
           "http",
+          "https"
         ]
         volumes  = [
           "/media/nvem/pihole/etc/:/etc/pihole/",
