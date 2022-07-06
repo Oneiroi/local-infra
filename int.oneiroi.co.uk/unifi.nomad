@@ -12,7 +12,6 @@ job "unifi" {
     network {
       port "http" {
         static       = 8080
-        to           = 8080
       }
       port "https" {
         static       = 8443

@@ -16,11 +16,11 @@ job "pi-hole" {
         static       = 53
       }
       port "http" {
-        static       = 8080
+        static       = 8081
         to           = 80
       }
       port "https" {
-        static       = 8443
+        static       = 8843
         to           = 443
       }
     }
