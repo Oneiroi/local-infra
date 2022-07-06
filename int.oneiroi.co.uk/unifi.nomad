@@ -12,6 +12,7 @@ job "unifi" {
     network {
       port "http" {
         static       = 8080
+        to           = 8080
       }
       port "https" {
         static       = 8443
@@ -19,21 +20,27 @@ job "unifi" {
       }
       port "httpredir"{
         static       = 8880
+        to           = 8080
       }
       port "httpsredir"{
         static       = 8843
+        to           = 8843
       }
       port "speedtest" {
         static       = 6789
+        to           = 6789
       }
       port "stun" {
         static       = 3478
+        to           = 3478
       }
       port "servicedisc" {
         static       = 10001
+        to           = 10001
       }
       port "l2disc" {
         static      = 1900
+        to          = 1900
       }
     }
     task "server" {

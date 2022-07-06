@@ -11,16 +11,18 @@ job "pi-hole" {
     network {
       port "dhcp" {
 	      static       = 67
+        to           = 67
       }
       port "dns" {
         static       = 53
+        to           = 53
       }
       port "http" {
         static       = 8081
         to           = 80
       }
       port "https" {
-        static       = 8843
+        static       = 443
         to           = 443
       }
     }
