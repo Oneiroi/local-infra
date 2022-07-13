@@ -8,6 +8,11 @@ job "unifi" {
   }
 
   group "unifi" {
+    volume "unifi" {
+        type        = "host"
+        source      = "unifi"
+        read_only   = false
+    }
     #https://help.ui.com/hc/en-us/articles/218506997-UniFi-Network-Required-Ports-Reference
     network {
       port "http" {
@@ -44,6 +49,11 @@ job "unifi" {
       }
     }
     task "server" {
+      volume_mount {
+          volume      = "unifi"
+          destination = "/config"
+          read_only   = false
+      }
       driver = "docker"
       config {        
         image = "linuxserver/unifi-controller:latest"
@@ -56,9 +66,6 @@ job "unifi" {
           "stun",
           "servicedisc",
           "l2disc"
-        ]
-        volumes  = [
-          "/media/nvem/unifi/config:/config",
         ]
       }
     }
