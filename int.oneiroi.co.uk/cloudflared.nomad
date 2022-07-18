@@ -8,6 +8,11 @@ job "cloudflared" {
   }
 
   group "cloudflared" {
+    volume "cloudflared" {
+        type        = "host"
+        source      = "cloudflared"
+        read_only   = false
+    }
     network {
       port "doh" {
         static       = 5053
@@ -20,6 +25,10 @@ job "cloudflared" {
          
     }
     task "server" {
+      volume_mount {
+          volume      = "cloudflared"
+          destination = "/var/log"
+        }
       driver = "docker"
       config {        
         image = "crazymax/cloudflared:latest"
@@ -27,10 +36,12 @@ job "cloudflared" {
           "doh",
           "argometrics"
         ]
-        volumes  = [
-          "/media/nvem/cloudflare/var/log:/var/log",
-        ]
       }
+    }
+    scaling {
+      enabled = true
+      min = 2
+      max = 2
     }
   }
 }

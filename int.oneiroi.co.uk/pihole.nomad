@@ -8,6 +8,17 @@ job "pi-hole" {
   }
 
   group "pi-hole" {
+    volume "pihole" {
+        type        = "host"
+        source      = "pihole"
+        read_only   = false
+    }
+    update {
+     max_parallel      = 2 
+     min_healthy_time  = "10s"
+     healthy_deadline  = "1m"
+     auto_revert       = true
+    }
     network {
       port "dhcp" {
 	      static       = 67
@@ -27,6 +38,10 @@ job "pi-hole" {
       }
     }
     task "server" {
+      volume_mount {
+          volume      = "pihole"
+          destination = "/etc/pihole"
+      }
       driver = "docker"
       config {        
         image = "pihole/pihole:latest"
@@ -36,12 +51,12 @@ job "pi-hole" {
           "http",
           "https"
         ]
-        volumes  = [
-          "/media/nvem/pihole/etc/:/etc/pihole/",
-          "/media/nvem/pihole/etc/dnsmasq.d/etc-dnsmasq.d/:/etc/dnsmasq.d/",
-          "/media/nvem/pihole/var/log/pihole.log:/var/log/pihole.log",
-        ]
       }
+    }
+    scaling {
+      enabled = true
+      min = 2
+      max = 2
     }
   }
 }

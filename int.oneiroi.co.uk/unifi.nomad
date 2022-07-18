@@ -68,6 +68,15 @@ job "unifi" {
           "l2disc"
         ]
       }
+      affinity {
+        attribute = "${node.datacenter}"
+        value = "internet-pi.int.oneiroi.co.uk.global"
+      }
+    }
+    scaling {
+      enabled = true
+      min = 1
+      max = 1
     }
   }
 }
