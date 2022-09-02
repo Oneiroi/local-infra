@@ -6,12 +6,29 @@ job "unifi" {
     attribute = "${attr.kernel.name}"
     value     = "linux"  
   }
+  affinity{
+    #Unifi gear uses set-inform to connect equipment to the controller useually on a fixed ip
+    #We want this job to always deploy to the primary node as a result
+    attribute = "${node.unique.name}"
+    value     = "internet-pi.int.oneiroi.co.uk.global"
+    weight    = 100
+  }
 
   group "unifi" {
     volume "unifi" {
         type        = "host"
         source      = "unifi"
         read_only   = false
+    }
+    update {
+     max_parallel      = 1
+     canary            = 1 
+     min_healthy_time  = "10s"
+     healthy_deadline  = "1m"
+     progress_deadline = "5m"
+     auto_revert       = true
+     auto_promote      = true
+     stagger           = "1m"
     }
     #https://help.ui.com/hc/en-us/articles/218506997-UniFi-Network-Required-Ports-Reference
     network {
@@ -56,7 +73,7 @@ job "unifi" {
       }
       driver = "docker"
       config {        
-        image = "linuxserver/unifi-controller:latest"
+        image = "linuxserver/unifi-controller:7.2.92"
         ports = [
           "http",
           "https",
