@@ -1,5 +1,5 @@
 # local-infra
-Learning nomad, making work with aarch64 pi's 
+Learning nomad, making work with aarch64 pi's , uses Docker to deploy nomad container jobs
 
 ## Diagram as Code
 
