@@ -10,7 +10,7 @@ job "unifi" {
     #Unifi gear uses set-inform to connect equipment to the controller useually on a fixed ip
     #We want this job to always deploy to the primary node as a result
     attribute = "${node.unique.name}"
-    value     = "internet-pi.int.oneiroi.co.uk.global"
+    value     = "internet-pi.int.oneiroi.co.uk"
     weight    = 100
   }
 
@@ -25,7 +25,7 @@ job "unifi" {
      canary            = 1 
      min_healthy_time  = "10s"
      healthy_deadline  = "1m"
-     progress_deadline = "5m"
+     progress_deadline = "15m"
      auto_revert       = true
      auto_promote      = true
      stagger           = "1m"
@@ -73,7 +73,7 @@ job "unifi" {
       }
       driver = "docker"
       config {        
-        image = "linuxserver/unifi-controller:7.2.92"
+        image = "linuxserver/unifi-controller:7.2.94"
         ports = [
           "http",
           "https",
@@ -86,8 +86,9 @@ job "unifi" {
         ]
       }
       affinity {
-        attribute = "${node.datacenter}"
-        value = "internet-pi.int.oneiroi.co.uk.global"
+        attribute = "${node.unique.name}"
+        value     = "internet-pi.int.oneiroi.co.uk"
+        weight    = 100
       }
     }
     scaling {
