@@ -5,7 +5,10 @@ job "cloudflared" {
   constraint {    
     attribute      = "${attr.kernel.name}"
     value          = "linux"
-    distinct_hosts = true
+  }
+
+  spread {
+     attribute = "${node.unique.name}"
   }
 
   group "cloudflared" {
