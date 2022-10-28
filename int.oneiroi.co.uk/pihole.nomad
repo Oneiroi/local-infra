@@ -5,7 +5,15 @@ job "pi-hole" {
   constraint {    
     attribute = "${attr.kernel.name}"
     value     = "linux"
-    distinct_hosts = true 
+  }
+
+  #constraint {
+  #  operator = "distinct_hosts"
+  #  value    = "true"
+  #}
+
+  spread {
+     attribute = "${node.unique.name}"
   }
 
   group "pi-hole" {
@@ -50,7 +58,7 @@ job "pi-hole" {
       }
       driver = "docker"
       config {        
-        image = "pihole/pihole:2022.09.2"
+        image = "pihole/pihole:2022.10"
         ports = [
           "dns",
           "dhcp",
