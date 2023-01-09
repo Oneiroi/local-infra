@@ -46,11 +46,14 @@ job "cloudflared" {
         }
       driver = "docker"
       config {        
-        image = "crazymax/cloudflared:2022.10.2"
+        image = "crazymax/cloudflared:2022.12.1"
         ports = [
           "doh",
           "argometrics"
         ]
+        cap_drop = ["all"]
+        cap_add  = []
+        readonly_rootfs = true
       }
     }
   }
