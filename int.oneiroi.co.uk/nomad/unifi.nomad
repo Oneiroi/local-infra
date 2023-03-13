@@ -6,6 +6,10 @@ job "unifi" {
     attribute = "${attr.kernel.name}"
     value     = "linux"  
   }
+  constraint {
+    attribute = "${node.unique.name}"
+    value     = "internet-pi.int.oneiroi.co.uk"
+  }
   affinity{
     #Unifi gear uses set-inform to connect equipment to the controller useually on a fixed ip
     #We want this job to always deploy to the primary node as a result
@@ -24,8 +28,8 @@ job "unifi" {
      max_parallel      = 1
      canary            = 1 
      min_healthy_time  = "10s"
-     healthy_deadline  = "1m"
-     progress_deadline = "15m"
+     healthy_deadline  = "3m"
+     progress_deadline = "5m"
      auto_revert       = true
      auto_promote      = true
      stagger           = "1m"
@@ -73,7 +77,7 @@ job "unifi" {
       }
       driver = "docker"
       config {        
-        image = "linuxserver/unifi-controller:7.2.95"
+        image = "linuxserver/unifi-controller:7.3.83"
         ports = [
           "http",
           "https",
@@ -86,10 +90,28 @@ job "unifi" {
         ]
       }
       affinity {
-        attribute = "${node.unique.name}"
-        value     = "internet-pi.int.oneiroi.co.uk"
+        #attribute = "${node.unique.name}"
+        attribute = "${node.unique.id}"
+        value     = "82b9781e-e552-aea5-16fe-7efa84e87371"
+        #value     = "internet-pi.int.oneiroi.co.uk"
         weight    = 100
       }
+      #This block is not currently functional, leads to dead job or being placed on another node
+      #service {
+      #  check {
+      #    name = "unifi_up"
+      #    type = "http"
+      #    port = "https"
+      #    path = "/manage"
+      #    interval = "60s"
+      #  }
+      #    timeout = "60s"
+      #  check_restart {
+      #    limit = 3
+      #    grace = "90s"
+      #    ignore_warnings = false
+      #  }
+      #}
     }
     scaling {
       enabled = true
