@@ -3,8 +3,8 @@ job "cloudflared" {
   type        = "service"
   
   constraint {    
-    attribute      = "${attr.kernel.name}"
-    value          = "linux"
+    attribute       = "${attr.kernel.name}"
+    value           = "linux" 
   }
 
   spread {
@@ -12,7 +12,23 @@ job "cloudflared" {
   }
 
   group "cloudflared" {
-    count = 2
+    count = 3
+    spread {
+      attribute = "${node.unique.name}"
+
+      target "internet-pi.int.oneiroi.co.uk" {
+        percent = 33
+      }
+
+      target "internet-pi2.int.oneiroi.co.uk" {
+        percent = 33
+      }
+
+      target "internet-pi3.int.oneiroi.co.uk" {
+        percent = 33
+      }
+
+    }
     volume "cloudflared" {
         type        = "host"
         source      = "cloudflared"
@@ -20,7 +36,7 @@ job "cloudflared" {
     }
     update {
      max_parallel      = 1
-     canary            = 1
+     canary            = 3
      min_healthy_time  = "10s"
      healthy_deadline  = "1m"
      progress_deadline = "5m"
@@ -36,8 +52,7 @@ job "cloudflared" {
       port "argometrics" {
         static = "49312"
         to     = "49312"
-      }
-         
+      } 
     }
     task "server" {
       volume_mount {
@@ -46,15 +61,29 @@ job "cloudflared" {
         }
       driver = "docker"
       config {        
-        image = "crazymax/cloudflared:2022.12.1"
+        image = "crazymax/cloudflared:2023.3.1"
         ports = [
           "doh",
           "argometrics"
         ]
-        cap_drop = ["all"]
-        cap_add  = []
+        #cap_drop = ["all"]
+        #cap_add  = []
         readonly_rootfs = true
       }
     }
+    service {
+      check {
+        name = "cloudflared_up"
+        type = "tcp"
+        port = "doh"
+        interval = "10s"
+        timeout = "1s"
+      }
+      check_restart {
+        limit = 3
+        grace = "90s"
+        ignore_warnings = false
+      }
+    }  
   }
 }

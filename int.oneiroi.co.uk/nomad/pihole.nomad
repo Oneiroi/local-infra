@@ -17,7 +17,7 @@ job "pi-hole" {
   }
 
   group "pi-hole" {
-    count = 2
+    count = 3
     volume "pihole" {
         type        = "host"
         source      = "pihole"
@@ -60,13 +60,28 @@ job "pi-hole" {
       config {
         #cap_drop = ["ALL"]
         #cap_add  = ["CAP_CHOWN","CAP_NET_BIND_SERVICE"] 
-        image = "pihole/pihole:2022.12.1"
+        image = "pihole/pihole:2023.05.2"
         ports = [
           "dns",
           "dhcp",
           "http",
           "https"
         ]
+      }
+    }
+    service {
+      check {
+        name = "pihole_up"
+        type = "http"
+        port = "http"
+        path = "/"
+        interval = "10s"
+        timeout = "1s"
+      }
+      check_restart {
+        limit = 3
+        grace = "90s"
+        ignore_warnings = false
       }
     }
   }
