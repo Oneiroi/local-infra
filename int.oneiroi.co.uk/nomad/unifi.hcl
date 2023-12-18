@@ -19,17 +19,20 @@ job "unifi" {
   }
 
   group "unifi" {
+    count = 2
+    #Volume stanza to access the host volume for data storage and persistance
     volume "unifi" {
         type        = "host"
         source      = "unifi"
         read_only   = false
     }
+    #Update stanza to enable rolling updates of the service
     update {
-     max_parallel      = 1
+     max_parallel      = 2
      canary            = 1 
      min_healthy_time  = "10s"
      healthy_deadline  = "3m"
-     progress_deadline = "5m"
+     progress_deadline = "10m"
      auto_revert       = true
      auto_promote      = true
      stagger           = "1m"
@@ -77,7 +80,7 @@ job "unifi" {
       }
       driver = "docker"
       config {        
-        image = "linuxserver/unifi-controller:7.4.156"
+        image = "linuxserver/unifi-controller:7.5.187"
         ports = [
           "http",
           "https",
@@ -112,11 +115,6 @@ job "unifi" {
       #    ignore_warnings = false
       #  }
       #}
-    }
-    scaling {
-      enabled = true
-      min = 1
-      max = 1
     }
   }
 }

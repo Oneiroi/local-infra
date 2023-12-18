@@ -6,6 +6,11 @@ job "pi-hole" {
     attribute = "${attr.kernel.name}"
     value     = "linux"
   }
+  constraint {
+    attribute = "node.class"
+    value = "AI"
+    operator = "!="
+  }
 
   #constraint {
   #  operator = "distinct_hosts"
@@ -18,6 +23,19 @@ job "pi-hole" {
 
   group "pi-hole" {
     count = 3
+    #spread the allocations across the 3 main nodes, negating the fourth node (as we only want 3 allocations total active when not upgrading)
+    spread {
+      attribute = "${node.unique.name}"
+      target "internet-pi.int.oneiroi.co.uk" {
+        percent = 33
+      }
+      target "internet-pi2.int.oneiroi.co.uk" {
+        percent = 33
+      }
+      target "internet-pi3.int.oneiroi.co.uk" {
+        percent = 33
+      }
+    }
     volume "pihole" {
         type        = "host"
         source      = "pihole"
@@ -25,7 +43,7 @@ job "pi-hole" {
     }
     update {
      max_parallel      = 1
-     canary            = 1
+     canary            = 3
      min_healthy_time  = "10s"
      healthy_deadline  = "1m"
      progress_deadline = "5m"
@@ -52,6 +70,11 @@ job "pi-hole" {
       }
     }
     task "server" {
+      constraint {
+        attribute = "node.unique.name"
+        value     = "ai.int.oneiroi.co.uk"
+        operator  = "!="
+      }
       volume_mount {
           volume      = "pihole"
           destination = "/etc/pihole"

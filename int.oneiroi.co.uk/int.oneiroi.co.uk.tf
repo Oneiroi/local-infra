@@ -3,13 +3,13 @@ provider "nomad" {
 }
 
 resource "nomad_job" "pi-hole" {
-    jobspec = file("${path.module}/nomad/pihole.nomad")
+    jobspec = file("${path.module}/nomad/pihole.hcl")
 }
 
 resource "nomad_job" "cloudflared" {
-    jobspec = file("${path.module}/nomad/cloudflared.nomad")
+    jobspec = file("${path.module}/nomad/cloudflared.hcl")
 }
 
 resource "nomad_job" "unifi" {
-    jobspec = file("${path.module}/nomad/unifi.nomad")
+    jobspec = file("${path.module}/nomad/unifi.hcl")
 }

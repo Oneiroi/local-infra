@@ -4,15 +4,19 @@ job "cloudflared" {
   
   constraint {    
     attribute       = "${attr.kernel.name}"
-    value           = "linux" 
+    value           = "linux"
   }
-
   spread {
      attribute = "${node.unique.name}"
   }
 
   group "cloudflared" {
     count = 3
+    scaling {
+      enabled = true
+      min     = 3
+      max     = 4
+    }
     spread {
       attribute = "${node.unique.name}"
 
