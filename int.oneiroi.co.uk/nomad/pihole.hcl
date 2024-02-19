@@ -82,8 +82,9 @@ job "pi-hole" {
       driver = "docker"
       config {
         #cap_drop = ["ALL"]
-        #cap_add  = ["CAP_CHOWN","CAP_NET_BIND_SERVICE"] 
-        image = "pihole/pihole:2023.05.2"
+        #cap_add  = ["CAP_CHOWN","CAP_NET_BIND_SERVICE"]
+        #docker pull pihole/pihole:2024.01.0
+        image = "pihole/pihole:2024.01.0"
         ports = [
           "dns",
           "dhcp",
@@ -92,20 +93,20 @@ job "pi-hole" {
         ]
       }
     }
-    service {
-      check {
-        name = "pihole_up"
-        type = "http"
-        port = "http"
-        path = "/"
-        interval = "10s"
-        timeout = "1s"
-      }
-      check_restart {
-        limit = 3
-        grace = "90s"
-        ignore_warnings = false
-      }
-    }
+    #service {
+      #check {
+      #  name = "pihole_up"
+      #  type = "http"
+      #  port = "http"
+      #  path = "/"
+      #  interval = "10s"
+      #  timeout = "1s"
+      #}
+      #check_restart {
+      #  limit = 3
+      #  grace = "90s"
+      #  ignore_warnings = false
+      #}
+    #}
   }
 }

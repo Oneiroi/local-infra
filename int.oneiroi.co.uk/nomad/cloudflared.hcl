@@ -6,6 +6,7 @@ job "cloudflared" {
     attribute       = "${attr.kernel.name}"
     value           = "linux"
   }
+  
   spread {
      attribute = "${node.unique.name}"
   }
@@ -28,7 +29,7 @@ job "cloudflared" {
         percent = 33
       }
 
-      target "internet-pi3.int.oneiroi.co.uk" {
+      target "internet-pi5.int.oneiroi.co.uk" {
         percent = 33
       }
 
@@ -65,7 +66,7 @@ job "cloudflared" {
         }
       driver = "docker"
       config {        
-        image = "crazymax/cloudflared:2023.3.1"
+        image = "crazymax/cloudflared:2023.10.0"
         ports = [
           "doh",
           "argometrics"
