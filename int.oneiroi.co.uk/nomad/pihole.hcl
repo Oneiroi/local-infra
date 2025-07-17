@@ -2,6 +2,10 @@ job "pi-hole" {
   datacenters = ["DC1"]
   type = "service"
   
+  meta {
+    image_version = "2025.07.1" # When modifying this is also needs to be updated in the config section below
+  }
+
   constraint {    
     attribute = "${attr.kernel.name}"
     value     = "linux"
@@ -41,16 +45,15 @@ job "pi-hole" {
         source      = "pihole"
         read_only   = false
     }
+
     update {
-     max_parallel      = 1
-     canary            = 3
-     min_healthy_time  = "10s"
-     healthy_deadline  = "1m"
-     progress_deadline = "5m"
-     auto_revert       = true
-     auto_promote      = true
-     stagger           = "1m"
+      max_parallel      = 0
+      min_healthy_time  = "10s"
+      healthy_deadline  = "1m"
+      progress_deadline = "5m"
+      auto_revert       = true
     }
+
     network {
       port "dhcp" {
 	      static       = 67
@@ -84,13 +87,24 @@ job "pi-hole" {
         #cap_drop = ["ALL"]
         #cap_add  = ["CAP_CHOWN","CAP_NET_BIND_SERVICE"]
         #docker pull pihole/pihole:2024.01.0
-        image = "pihole/pihole:2024.01.0"
+        image = "pihole/pihole:2025.07.1"
+        force_pull = true
         ports = [
           "dns",
           "dhcp",
           "http",
           "https"
         ]
+      }
+    }
+    service {
+      check {
+        name      = "pihole_http"
+        type      = "http"
+        path      = "/admin/login.php"
+        interval  = "10s"
+        timeout   = "2s"
+        port      = "8081"
       }
     }
     #service {
