@@ -13,3 +13,4 @@ resource "nomad_job" "cloudflared" {
 resource "nomad_job" "unifi" {
     jobspec = file("${path.module}/nomad/unifi.hcl")
 }
+

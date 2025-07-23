@@ -1,7 +1,11 @@
 job "cloudflared" {
   datacenters = ["DC1"]
   type        = "service"
-  
+
+  meta {
+    image_version = "2025.6.1" # When modifying this is also needs to be updated in the config section below
+  }
+
   constraint {    
     attribute       = "${attr.kernel.name}"
     value           = "linux"
@@ -40,14 +44,11 @@ job "cloudflared" {
         read_only   = false
     }
     update {
-     max_parallel      = 1
-     canary            = 3
-     min_healthy_time  = "10s"
-     healthy_deadline  = "1m"
-     progress_deadline = "5m"
-     auto_revert       = true
-     auto_promote      = true
-     stagger           = "1m"
+      max_parallel      = 0
+      min_healthy_time  = "10s"
+      healthy_deadline  = "1m"
+      progress_deadline = "5m"
+      auto_revert       = true
     }
     network {
       port "doh" {
@@ -66,7 +67,7 @@ job "cloudflared" {
         }
       driver = "docker"
       config {        
-        image = "crazymax/cloudflared:2023.10.0"
+        image = "crazymax/cloudflared:2025.6.1"
         ports = [
           "doh",
           "argometrics"
