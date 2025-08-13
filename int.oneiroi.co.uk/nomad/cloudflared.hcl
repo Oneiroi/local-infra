@@ -44,7 +44,7 @@ job "cloudflared" {
         read_only   = false
     }
     update {
-      max_parallel      = 0
+      max_parallel      = 1 
       min_healthy_time  = "10s"
       healthy_deadline  = "1m"
       progress_deadline = "5m"

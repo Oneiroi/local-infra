@@ -3,7 +3,7 @@ job "pi-hole" {
   type = "service"
   
   meta {
-    image_version = "2025.07.1" # When modifying this is also needs to be updated in the config section below
+    image_version = "2025.08.0" # When modifying this is also needs to be updated in the config section below
   }
 
   constraint {    
@@ -47,7 +47,7 @@ job "pi-hole" {
     }
 
     update {
-      max_parallel      = 0
+      max_parallel      = 1 
       min_healthy_time  = "10s"
       healthy_deadline  = "1m"
       progress_deadline = "5m"
@@ -87,7 +87,7 @@ job "pi-hole" {
         #cap_drop = ["ALL"]
         #cap_add  = ["CAP_CHOWN","CAP_NET_BIND_SERVICE"]
         #docker pull pihole/pihole:2024.01.0
-        image = "pihole/pihole:2025.07.1"
+        image = "pihole/pihole:2025.08.0"
         force_pull = true
         ports = [
           "dns",

@@ -19,7 +19,7 @@ job "unifi" {
   }
 
   group "unifi" {
-    count = 2
+    count = 1 
     #Volume stanza to access the host volume for data storage and persistance
     volume "unifi" {
         type        = "host"
@@ -28,7 +28,7 @@ job "unifi" {
     }
     #Update stanza to enable rolling updates of the service
     update {
-     max_parallel      = 2
+     max_parallel      = 1 
      canary            = 1 
      min_healthy_time  = "10s"
      healthy_deadline  = "3m"

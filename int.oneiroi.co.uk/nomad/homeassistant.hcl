@@ -1,4 +1,4 @@
-job "cloudflared" {
+job "homeassistant" {
   datacenters = ["DC1"]
   type        = "service"
 
@@ -40,12 +40,17 @@ job "cloudflared" {
       driver = "docker"
 
       config {
-        image = "homeassistant/home-assistant:2025.7"
+        image = "homeassistant-hacs:2025.07.23"
         ports = [
           "homeassist",
         ]
         #readonly_rootfs = true
         network_mode = "host"
+        volumes = [
+          "/run/dbus:/run/dbus:ro",
+          #"/dev:/dev",
+          "/etc/machine-id:/etc/machine-id:ro"
+        ]
       }
 
       resources {
