@@ -1,4 +1,4 @@
-job "homeassistant" {
+job "homeassisant" {
   datacenters = ["DC1"]
   type        = "service"
 
@@ -46,11 +46,19 @@ job "homeassistant" {
         ]
         #readonly_rootfs = true
         network_mode = "host"
+<<<<<<< HEAD
         volumes = [
           "/run/dbus:/run/dbus:ro",
           #"/dev:/dev",
           "/etc/machine-id:/etc/machine-id:ro"
         ]
+=======
+         volumes = [
+            "/run/dbus:/run/dbus:ro",
+            #"/dev:/dev",
+            "/etc/machine-id:/etc/machine-id:ro" 
+          ]
+>>>>>>> 30e2ef2 (homeassistant changes)
       }
 
       resources {
