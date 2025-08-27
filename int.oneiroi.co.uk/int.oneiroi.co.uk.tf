@@ -1,5 +1,5 @@
 provider "nomad" {
-    address = "https://internet-pi.int.oneiroi.co.uk:4646"
+    address = "http://192.168.83.6:4646"
 }
 
 resource "nomad_job" "pi-hole" {
@@ -12,5 +12,9 @@ resource "nomad_job" "cloudflared" {
 
 resource "nomad_job" "unifi" {
     jobspec = file("${path.module}/nomad/unifi.hcl")
+}
+
+resource "nomad_job" "twingate" {
+    jobspec = file("${path.module}/nomad/twingate.hcl")
 }
 
