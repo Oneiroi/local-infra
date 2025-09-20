@@ -3,7 +3,7 @@ job "cloudflared" {
   type        = "service"
 
   meta {
-    image_version = "2025.6.1" # When modifying this is also needs to be updated in the config section below
+    image_version = "2025.9.0" # When modifying this is also needs to be updated in the config section below
   }
 
   constraint {    
@@ -66,8 +66,16 @@ job "cloudflared" {
           destination = "/var/log"
         }
       driver = "docker"
-      config {        
-        image = "crazymax/cloudflared:2025.6.1"
+      config {
+        image = "cloudflare/cloudflared:2025.9.0"
+        args = [
+          "proxy-dns",
+          "--address", "0.0.0.0",
+          "--port", "5053",
+          "--upstream", "https://1.1.1.1/dns-query",
+          "--upstream", "https://1.0.0.1/dns-query",
+          "--metrics", "0.0.0.0:49312"
+        ]
         ports = [
           "doh",
           "argometrics"

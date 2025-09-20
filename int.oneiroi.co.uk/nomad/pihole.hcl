@@ -1,9 +1,10 @@
-job "pi-hole" {
+job "pihole" {
   datacenters = ["DC1"]
   type = "service"
   
   meta {
     image_version = "2025.08.0" # When modifying this is also needs to be updated in the config section below
+    deployment_trigger = "2025-09-20-1410" # Force redeployment
   }
 
   constraint {    
@@ -25,7 +26,7 @@ job "pi-hole" {
      attribute = "${node.unique.name}"
   }
 
-  group "pi-hole" {
+  group "pihole" {
     count = 3
     #spread the allocations across the 3 main nodes, negating the fourth node (as we only want 3 allocations total active when not upgrading)
     spread {

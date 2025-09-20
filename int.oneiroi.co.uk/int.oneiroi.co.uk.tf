@@ -2,7 +2,7 @@ provider "nomad" {
     address = "http://192.168.83.6:4646"
 }
 
-resource "nomad_job" "pi-hole" {
+resource "nomad_job" "pihole" {
     jobspec = file("${path.module}/nomad/pihole.hcl")
 }
 
