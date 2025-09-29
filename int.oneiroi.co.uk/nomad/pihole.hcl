@@ -4,7 +4,7 @@ job "pihole" {
   
   meta {
     image_version = "2025.08.0" # When modifying this is also needs to be updated in the config section below
-    deployment_trigger = "2025-09-20-1410" # Force redeployment
+    deployment_trigger = "2025-09-29-1700" # Force redeployment
   }
 
   constraint {    
@@ -37,7 +37,7 @@ job "pihole" {
       target "internet-pi2.int.oneiroi.co.uk" {
         percent = 33
       }
-      target "internet-pi3.int.oneiroi.co.uk" {
+      target "internet-pi5.int.oneiroi.co.uk" {
         percent = 33
       }
     }
