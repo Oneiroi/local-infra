@@ -4,7 +4,7 @@ job "pihole" {
   
   meta {
     image_version = "2025.08.0" # When modifying this is also needs to be updated in the config section below
-    deployment_trigger = "2025-09-29-1700" # Force redeployment
+    deployment_trigger = "2025-09-29-1800" # Force redeployment - fix health check path
   }
 
   constraint {    
@@ -102,7 +102,7 @@ job "pihole" {
       check {
         name      = "pihole_http"
         type      = "http"
-        path      = "/admin/login.php"
+        path      = "/admin/login"
         interval  = "10s"
         timeout   = "2s"
         port      = "8081"
