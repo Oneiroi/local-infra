@@ -3,8 +3,8 @@ job "pihole" {
   type = "service"
   
   meta {
-    image_version = "2025.08.0" # When modifying this is also needs to be updated in the config section below
-    deployment_trigger = "2025-09-29-1800" # Force redeployment - fix health check path
+    image_version = "2025.11.1" # When modifying this is also needs to be updated in the config section below
+    deployment_trigger = "2025-12-01-2156" # Use Caddy proxy for health checks
   }
 
   constraint {    
@@ -88,7 +88,7 @@ job "pihole" {
         #cap_drop = ["ALL"]
         #cap_add  = ["CAP_CHOWN","CAP_NET_BIND_SERVICE"]
         #docker pull pihole/pihole:2024.01.0
-        image = "pihole/pihole:2025.08.0"
+        image = "pihole/pihole:2025.11.1"
         force_pull = true
         ports = [
           "dns",
@@ -99,13 +99,19 @@ job "pihole" {
       }
     }
     service {
+      name = "pihole"
+      port = "http"
+
       check {
-        name      = "pihole_http"
-        type      = "http"
-        path      = "/admin/login"
-        interval  = "10s"
-        timeout   = "2s"
-        port      = "8081"
+        name     = "pihole_http"
+        type     = "http"
+        path     = "/admin/login"
+        interval = "10s"
+        timeout  = "2s"
+        port     = 80
+        header {
+          Host = ["pihole.${node.unique.name}"]
+        }
       }
     }
     #service {
