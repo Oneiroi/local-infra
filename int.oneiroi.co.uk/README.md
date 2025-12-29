@@ -1,7 +1,54 @@
-# WTF ?!
+# Local Infrastructure - int.oneiroi.co.uk
 
-These are nomad job specification files to migrate from running a traditional monolith stack of services on individual devices for home network management to nomad jobs.
+This directory contains the Infrastructure-as-Code (IaC) configuration for managing home network services using HashiCorp Nomad on Raspberry Pi devices.
 
-There is likely to be a *LOT* of missing nuances here as I learn nomad fully, and this may or may not be updated in the future as I learn more.
+## What's Inside
 
-Regardless this serves as an IaaC beginings for my home network for the time being, and a break/fix sandbox to be able to play/learn nomad in safety.
+### Nomad Job Specifications (`nomad/`)
+Nomad job files for containerized services including:
+- **Pi-hole** - DNS ad-blocking (3 replicas)
+- **Cloudflared** - DNS-over-HTTPS tunnel
+- **Unifi Controller** - Network management
+- **Home Assistant** - Home automation
+- **n8n** - Workflow automation platform
+- **Vault** - Secrets management
+- **Victron** - Energy monitoring
+- **Twingate** - Secure network connector
+
+### Infrastructure Monitoring (`n8n/`)
+Automated infrastructure monitoring workflow with:
+- Comprehensive health checks for all services
+- LLM-based intelligent analysis (Ollama + gemma2:9b)
+- Discord notifications with human-in-the-loop approval
+- Automated remediation capabilities
+
+See `n8n/README.md` for detailed monitoring setup.
+
+### OpenTofu Configuration
+- `int.oneiroi.co.uk.tf` - Main OpenTofu configuration managing Nomad jobs
+
+## Quick Start
+
+```bash
+# Deploy infrastructure
+cd int.oneiroi.co.uk/
+tofu init
+tofu apply
+
+# Set up monitoring
+cd n8n/
+./test_components.sh
+```
+
+## Architecture
+
+- **3 Main Nodes**: Raspberry Pi devices (server + client roles)
+- **1 AI Node**: Dedicated AI workload node (client-only)
+- **Deployment**: Services spread across nodes for high availability
+- **Updates**: Rolling updates with auto-revert on failure
+
+## Learning & Experimentation
+
+This serves as an IaC sandbox for learning Nomad and managing home infrastructure. Expect ongoing refinements and improvements as knowledge grows.
+
+See `CLAUDE.md` for detailed guidance and architecture documentation.

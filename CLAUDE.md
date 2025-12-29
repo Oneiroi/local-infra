@@ -2,6 +2,15 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ Critical Operating Principles
+
+**DEPLOYMENT POLICY:**
+- **NEVER** execute deployment commands (`tofu apply`, `nomad job run`, etc.) automatically
+- **ALWAYS** provide the user with the exact commands to run
+- **USER IS RESPONSIBLE** for all deployments and infrastructure changes
+- Claude's role is to prepare, document, and guide - NOT to execute deployments
+- All automation scripts must require explicit user confirmation before making remote changes
+
 ## Project Overview
 
 This is a home infrastructure-as-code repository using HashiCorp Nomad for container orchestration on Raspberry Pi devices. The project manages home network services including Pi-hole (DNS), Cloudflared (DNS-over-HTTPS), Unifi Controller, and other services across multiple Pi nodes.
@@ -17,18 +26,30 @@ This is a home infrastructure-as-code repository using HashiCorp Nomad for conta
 ```
 int.oneiroi.co.uk/
 ├── int.oneiroi.co.uk.tf    # Main OpenTofu configuration
-└── nomad/                  # Nomad job specifications
-    ├── pihole.hcl         # Pi-hole DNS service (3 replicas)
-    ├── cloudflared.hcl    # Cloudflare tunnel/DNS-over-HTTPS
-    ├── unifi.hcl          # Unifi network controller
-    ├── homeassistant.hcl  # Home Assistant
-    ├── n8n.hcl           # n8n automation
-    ├── vault.hcl         # HashiCorp Vault
-    ├── victron.hcl       # Victron energy monitoring
-    └── twingate.hcl      # Twingate secure network connector
+├── nomad/                  # Nomad job specifications
+│   ├── pihole.hcl         # Pi-hole DNS service (3 replicas)
+│   ├── cloudflared.hcl    # Cloudflare tunnel/DNS-over-HTTPS
+│   ├── unifi.hcl          # Unifi network controller
+│   ├── homeassistant.hcl  # Home Assistant
+│   ├── n8n.hcl           # n8n automation platform
+│   ├── vault.hcl         # HashiCorp Vault
+│   ├── victron.hcl       # Victron energy monitoring
+│   └── twingate.hcl      # Twingate secure network connector
+└── n8n/                   # n8n workflow configurations
+    ├── infrastructure_monitor_workflow.json  # Main monitoring workflow
+    ├── discord_approval_bot.py              # Discord approval bot
+    ├── test_components.sh                   # Component testing script
+    ├── README.md                            # Detailed documentation
+    ├── ARCHITECTURE.md                      # Architecture details
+    └── QUICKSTART.md                        # Quick start guide
 ```
 
 ## Common Commands
+
+**Environment Setup**: Set your Nomad cluster address:
+```bash
+export NOMAD_ADDR=http://<your-nomad-server>:4646
+```
 
 ### OpenTofu Operations
 ```bash
@@ -39,19 +60,19 @@ tofu apply
 tofu destroy
 ```
 
-**Note**: This project uses OpenTofu instead of legacy Terraform. The Nomad provider is configured to use `http://192.168.83.6:4646`.
+**Note**: This project uses OpenTofu instead of legacy Terraform. The Nomad provider is configured to use `$NOMAD_ADDR`.
 
 ### Nomad Job Management
-Access Nomad UI at: `http://192.168.83.6:4646` (via Twingate tunnel)
+Access Nomad UI at: `$NOMAD_ADDR` (via Twingate tunnel)
 
 Direct job operations (if needed):
 ```bash
-NOMAD_ADDR=http://192.168.83.6:4646 nomad job run nomad/pihole.hcl
-NOMAD_ADDR=http://192.168.83.6:4646 nomad job status pi-hole
-NOMAD_ADDR=http://192.168.83.6:4646 nomad job stop pi-hole
+nomad job run nomad/pihole.hcl
+nomad job status pi-hole
+nomad job stop pi-hole
 ```
 
-**Note**: Use `NOMAD_ADDR=http://192.168.83.6:4646` for all Nomad CLI operations since DNS resolution requires Twingate connectivity.
+**Note**: Ensure `NOMAD_ADDR` environment variable is set for all Nomad CLI operations since DNS resolution requires Twingate connectivity.
 
 ### Diagram Generation
 Generate infrastructure diagram:
@@ -91,6 +112,42 @@ When updating container images, version must be updated in two places:
 ### Volume Mounts
 Services requiring persistence use host volumes (e.g., Pi-hole configuration)
 
+## Infrastructure Monitoring
+
+The `n8n/` directory contains an automated infrastructure monitoring workflow that provides:
+
+- **Comprehensive Health Checks**: Network connectivity, Nomad cluster status, Pi-hole, and Cloudflared services
+- **LLM-Based Analysis**: Local Ollama (gemma2:9b) for intelligent issue detection and recommendations
+- **Human-in-the-Loop**: Discord webhook notifications with approval workflow for remediation actions
+- **Automated Remediation**: SSH-based service restarts and fixes (with required human approval)
+
+### Key Components
+
+- `infrastructure_monitor_workflow.json` - n8n workflow (runs every 5 minutes)
+- `discord_approval_bot.py` - Discord bot for easy approval/rejection via reactions
+- `test_components.sh` - Comprehensive component testing script
+
+### Quick Setup
+
+```bash
+cd int.oneiroi.co.uk/n8n/
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your Discord webhook and bot token
+
+# Test all components
+./test_components.sh
+
+# Import workflow into n8n and start the Discord bot
+python3 discord_approval_bot.py
+```
+
+See `n8n/README.md` for detailed setup instructions and `n8n/QUICKSTART.md` for step-by-step guidance.
+
 ## Twingate Connector Setup
 
 The Twingate connector provides secure network access to the home lab infrastructure.
@@ -105,7 +162,7 @@ The Twingate connector provides secure network access to the home lab infrastruc
 
 2. **Set Required Nomad Variables**:
    ```bash
-   NOMAD_ADDR=http://192.168.83.6:4646 nomad var put -namespace=default nomad/jobs/twingate \
+   nomad var put -namespace=default nomad/jobs/twingate \
      twingate_access_token="your_access_token" \
      twingate_refresh_token="your_refresh_token" \
      twingate_network="your_network_name"

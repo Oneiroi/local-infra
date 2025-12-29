@@ -1,0 +1,57 @@
+# Terraform state files
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform directory
+.terraform/
+.terraform.lock.hcl
+
+# Terraform variable files
+*.tfvars
+*.tfvars.json
+
+# Environment files
+env
+.env
+
+# Serena cache
+.serena/
+
+# MCP files
+.mcp.json
+
+# Continue session files
+.continue/
+
+# Sensitive internal documentation (contains network details)
+DNS_FAQ.md
+DNS_INFRASTRUCTURE.md
+DNS_PRIVACY_TESTS.md
+HOMEASSISTANT_DEPLOYMENT.md
+UNIFI_MIGRATION_*.md
+DISASTER_RECOVERY.md
+FIX-*.md
+TODO.md
+*.md.backup
+test-dns-privacy.sh
+twingate.vars.sh
+
+# Nomad cluster configs (contain internal IPs, hostnames, network topology)
+nomad-cluster/
+
+# Ansible configs (contain internal IPs, hostnames, credentials)
+int.oneiroi.co.uk/ansible/
+
+# Nomad job files (contain internal IPs and network topology)
+int.oneiroi.co.uk/nomad/*.hcl
+
+# n8n workflows (may contain credentials)
+n8n/
+
+# Unbound configs (may contain network details)
+unbound/
+
+# Test files
+test.png
+*.hcl.backup
