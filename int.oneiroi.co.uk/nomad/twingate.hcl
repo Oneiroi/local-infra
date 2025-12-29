@@ -3,7 +3,8 @@ job "twingate" {
   type        = "service"
 
   meta {
-    image_version = "1"
+    image_version = "1.82.0"
+    deployment_trigger = "2025-12-19-upgrade-to-1.82.0"
   }
 
   constraint {    
@@ -37,9 +38,10 @@ job "twingate" {
 
     task "connector" {
       driver = "docker"
-      
-      config {        
-        image = "twingate/connector:1"
+
+      config {
+        name = "twingate"
+        image = "twingate/connector:1.82.0"
       }
       
       template {

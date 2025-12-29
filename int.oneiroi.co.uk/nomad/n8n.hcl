@@ -62,6 +62,7 @@ job "n8n" {
       driver = "docker"
 
       config {
+        name = "n8n"
         image = "n8nio/n8n:1.103.1"
         ports = ["n8n"]
 

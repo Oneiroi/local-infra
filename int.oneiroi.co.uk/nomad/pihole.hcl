@@ -85,6 +85,7 @@ job "pihole" {
       }
       driver = "docker"
       config {
+        name = "pihole"
         #cap_drop = ["ALL"]
         #cap_add  = ["CAP_CHOWN","CAP_NET_BIND_SERVICE"]
         #docker pull pihole/pihole:2024.01.0
@@ -96,6 +97,12 @@ job "pihole" {
           "http",
           "https"
         ]
+      }
+
+      # Configure Pi-hole to use Unbound as upstream DNS
+      # Port 5335 to avoid conflict with Avahi mDNS on 5353
+      env {
+        PIHOLE_DNS_ = "127.0.0.1#5335"
       }
     }
     service {

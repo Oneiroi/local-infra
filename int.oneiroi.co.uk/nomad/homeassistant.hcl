@@ -1,9 +1,9 @@
-job "homeassisant" {
+job "homeassistant" {
   datacenters = ["DC1"]
   type        = "service"
 
   meta {
-    image_version = "homeassistant/home-assistant:2025.7"
+    image_version = "2025.7"
   }
 
   constraint {
@@ -17,63 +17,84 @@ job "homeassisant" {
     weight    = 100
   }
 
-  group "homeassist" {
+  group "homeassistant" {
     count = 1
+
+    # Host volume for Home Assistant configuration persistence
+    volume "homeassistant-config" {
+      type      = "host"
+      source    = "homeassistant_config"
+      read_only = false
+    }
 
     update {
       max_parallel      = 0
       min_healthy_time  = "10s"
-      healthy_deadline  = "1m"
-      progress_deadline = "5m"
+      healthy_deadline  = "3m"
+      progress_deadline = "10m"
       auto_revert       = true
     }
 
     network {
-      port "homeassist" {
-        static   = 8123
-        to       = 8123
-        
+      port "http" {
+        static = 8123
+        to     = 8123
       }
     }
 
     task "server" {
       driver = "docker"
 
+      volume_mount {
+        volume      = "homeassistant-config"
+        destination = "/config"
+        read_only   = false
+      }
+
       config {
-        image = "homeassistant-hacs:2025.07.23"
-        ports = [
-          "homeassist",
-        ]
-        #readonly_rootfs = true
+        name = "homeassistant"
+        image = "homeassistant/home-assistant:2025.7"
+        ports = ["http"]
+
+        # Host network mode required for device discovery
         network_mode = "host"
-<<<<<<< HEAD
+
+        # Required system mounts
         volumes = [
           "/run/dbus:/run/dbus:ro",
-          #"/dev:/dev",
           "/etc/machine-id:/etc/machine-id:ro"
         ]
-=======
-         volumes = [
-            "/run/dbus:/run/dbus:ro",
-            #"/dev:/dev",
-            "/etc/machine-id:/etc/machine-id:ro" 
-          ]
->>>>>>> 30e2ef2 (homeassistant changes)
+
+        # Privileged mode may be needed for USB devices
+        privileged = true
+      }
+
+      env {
+        TZ = "UTC"
       }
 
       resources {
-        cpu    = 500
-        memory = 256
+        cpu    = 1000  # Home Assistant needs more CPU
+        memory = 512   # Increased memory for stability
       }
     }
 
     service {
+      name = "homeassistant"
+      port = "http"
+
+      tags = [
+        "homeassistant",
+        "home-automation"
+      ]
+
       check {
-        name     = "homeassist_up"
-        type     = "tcp"
-        port     = "homeassist"
-        interval = "10s"
-        timeout  = "1s"
+        name     = "homeassistant_http"
+        type     = "http"
+        port     = "http"
+        path     = "/"
+        interval = "30s"
+        timeout  = "5s"
       }
 
       check_restart {

@@ -79,7 +79,8 @@ job "unifi" {
           read_only   = false
       }
       driver = "docker"
-      config {        
+      config {
+        name = "unifi"
         image = "linuxserver/unifi-controller:8.0.24"
         ports = [
           "http",

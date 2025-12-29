@@ -47,7 +47,8 @@ job "victron-influx-loader" {
           destination = "/config"
         }
       driver = "docker"
-      config {        
+      config {
+        name = "victron-influx-loader"
         image = "victronenergy/venus-influx-loader:1.0.0"
         ports = [
           "http"
