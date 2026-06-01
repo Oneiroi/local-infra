@@ -3,39 +3,22 @@ job "n8n" {
   type = "service"
 
   meta {
-    image_version = "1.103.1"
+    image_version = "1.123.17"
   }
 
-  constraint {    
+  constraint {
     attribute = "${attr.kernel.name}"
     value     = "linux"
   }
 
+  # Run on Orin Super (AI node) for better resources
   constraint {
-    attribute = "node.class"
+    attribute = "${node.class}"
     value     = "AI"
-    operator  = "!="
-  }
-
-  spread {
-    attribute = "${node.unique.name}"
   }
 
   group "n8n" {
     count = 1
-
-    spread {
-      attribute = "${node.unique.name}"
-      target "internet-pi.int.oneiroi.co.uk" {
-        percent = 33
-      }
-      target "internet-pi2.int.oneiroi.co.uk" {
-        percent = 33
-      }
-      target "internet-pi3.int.oneiroi.co.uk" {
-        percent = 33
-      }
-    }
 
     update {
       max_parallel      = 1            # rolling update, one at a time
@@ -53,17 +36,10 @@ job "n8n" {
     }
 
     task "server" {
-      constraint {
-        attribute = "node.unique.name"
-        value     = "ai.int.oneiroi.co.uk"
-        operator  = "!="
-      }
-
       driver = "docker"
 
       config {
-        name = "n8n"
-        image = "n8nio/n8n:1.103.1"
+        image = "n8nio/n8n:1.123.17"
         ports = ["n8n"]
 
         volumes = [

@@ -4,6 +4,7 @@ job "cloudflared" {
 
   meta {
     image_version = "2025.11.1" # When modifying this is also needs to be updated in the config section below
+    retry = "1"
   }
 
   constraint {
@@ -73,7 +74,6 @@ job "cloudflared" {
         }
       driver = "docker"
       config {
-        name = "cloudflared"
         image = "cloudflare/cloudflared:2025.11.1"
         args = [
           "proxy-dns",

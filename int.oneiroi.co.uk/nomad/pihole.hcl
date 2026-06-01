@@ -4,7 +4,7 @@ job "pihole" {
   
   meta {
     image_version = "2025.11.1" # When modifying this is also needs to be updated in the config section below
-    deployment_trigger = "2025-12-01-2156" # Use Caddy proxy for health checks
+    deployment_trigger = "2026-01-28" # Force recovery
   }
 
   constraint {    
@@ -85,7 +85,6 @@ job "pihole" {
       }
       driver = "docker"
       config {
-        name = "pihole"
         #cap_drop = ["ALL"]
         #cap_add  = ["CAP_CHOWN","CAP_NET_BIND_SERVICE"]
         #docker pull pihole/pihole:2024.01.0

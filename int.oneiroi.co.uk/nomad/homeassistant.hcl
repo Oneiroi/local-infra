@@ -3,18 +3,13 @@ job "homeassistant" {
   type        = "service"
 
   meta {
-    image_version = "2025.7"
+    image_version = "2025.12.5"
   }
 
+  # Deploy on Orin Super (AI node) - better resources for HA
   constraint {
-    attribute = "${attr.kernel.name}"
-    value     = "linux"
-  }
-
-  affinity {
-    attribute = "${node.unique.name}"
-    value     = "internet-pi.int.oneiroi.co.uk"
-    weight    = 100
+    attribute = "${node.class}"
+    value     = "AI"
   }
 
   group "homeassistant" {
@@ -23,7 +18,7 @@ job "homeassistant" {
     # Host volume for Home Assistant configuration persistence
     volume "homeassistant-config" {
       type      = "host"
-      source    = "homeassistant_config"
+      source    = "homeassistant-config"
       read_only = false
     }
 
@@ -42,7 +37,7 @@ job "homeassistant" {
       }
     }
 
-    task "server" {
+    task "homeassistant" {
       driver = "docker"
 
       volume_mount {
@@ -52,8 +47,7 @@ job "homeassistant" {
       }
 
       config {
-        name = "homeassistant"
-        image = "homeassistant/home-assistant:2025.7"
+        image = "homeassistant/home-assistant:2025.12.5"
         ports = ["http"]
 
         # Host network mode required for device discovery
@@ -74,8 +68,8 @@ job "homeassistant" {
       }
 
       resources {
-        cpu    = 1000  # Home Assistant needs more CPU
-        memory = 512   # Increased memory for stability
+        cpu    = 2000  # More CPU on Orin Super
+        memory = 1024  # More memory for integrations and GeekMagic devices
       }
     }
 

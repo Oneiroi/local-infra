@@ -14,6 +14,7 @@
 # Environment files
 env
 .env
+*.env
 
 # Serena cache
 .serena/
@@ -41,7 +42,7 @@ twingate.vars.sh
 nomad-cluster/
 
 # Ansible configs (contain internal IPs, hostnames, credentials)
-int.oneiroi.co.uk/ansible/
+**/ansible/
 
 # Nomad job files (contain internal IPs and network topology)
 int.oneiroi.co.uk/nomad/*.hcl
